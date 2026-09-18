@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+<head>
+<base target="_top">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>DECRYPT — Command Center</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+<svg style="display:none" aria-hidden="true">
+  <symbol id="i-overview"      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></symbol>
+  <symbol id="i-registration"  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 12h6M12 9v6"/><rect x="3" y="4" width="18" height="16" rx="2"/></symbol>
+  <symbol id="i-participants"  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><circle cx="17.5" cy="9" r="2.4"/><path d="M16 14.3c2.6.4 4.5 2.2 4.5 4.7"/></symbol>
+  <symbol id="i-attendance"    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/></symbol>
+  <symbol id="i-communication" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 6l8.5 7 8.5-7"/></symbol>
+  <symbol id="i-speakers"      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="9" y="2" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0014 0M12 18v4M9 22h6"/></symbol>
+  <symbol id="i-certificates"  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="9" r="6"/><path d="M9 14.5L7.5 22 12 19l4.5 3-1.5-7.5"/></symbol>
+  <symbol id="i-eventday"      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z"/></symbol>
+  <symbol id="i-search"        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.8-4.8"/></symbol>
+  <symbol id="i-menu"          viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+  <symbol id="i-x"             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 5l14 14M19 5L5 19"/></symbol>
+  <symbol id="i-camera"        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7l1.5-3h5L16 7"/><circle cx="12" cy="13.5" r="3.5"/></symbol>
+  <symbol id="i-check-circle"  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/></symbol>
+  <symbol id="i-lock"          viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+</svg>
+
+<!-- ============================================================
+     AUTH GATE — overlays everything until password is verified
+     ============================================================ -->
+<div id="auth-gate" class="auth-gate">
+  <div class="auth-box">
+    <div class="auth-brand">
+      <span class="auth-dot"></span>
+      <span class="auth-wordmark">DECRYPT</span>
+    </div>
+    <p class="auth-sub label">Command Center</p>
+    <div class="auth-field" id="auth-field">
+      <input type="password" id="auth-input" placeholder="Enter access password"
+             autocomplete="current-password" autocapitalize="none" spellcheck="false">
+      <button class="btn btn-solid" id="auth-btn">
+        <span id="auth-btn-label">Unlock</span>
+        <span class="btn-arrow">→</span>
+      </button>
+    </div>
+    <p class="auth-error" id="auth-error" role="alert"></p>
+  </div>
+</div>
+
+<!-- ============================================================
+     APP SHELL (hidden until auth passes)
+     ============================================================ -->
+<div class="app-shell" id="app-shell" style="display:none">
+
+  <div class="drawer-veil" id="drawer-veil"></div>
+
+  <nav class="rail" id="rail" aria-label="Command Center sections">
+    <div class="rail-brand">
+      <span class="dot" aria-hidden="true"></span>
+      <div class="rail-brand-text">
+        <strong>DECRYPT</strong>
+        <span>Command Center</span>
+      </div>
+    </div>
+    <div class="rail-nav" id="rail-nav">
+      <button class="rail-item active" data-view="overview">    <svg><use href="#i-overview"/></svg>      <span class="rail-item-label">Overview</span></button>
+      <button class="rail-item" data-view="registration">       <svg><use href="#i-registration"/></svg>  <span class="rail-item-label">Registration</span></button>
+      <button class="rail-item" data-view="participants">       <svg><use href="#i-participants"/></svg>  <span class="rail-item-label">Participants</span></button>
+      <button class="rail-item" data-view="attendance">         <svg><use href="#i-attendance"/></svg>    <span class="rail-item-label">Attendance</span></button>
+      <button class="rail-item" data-view="communication">      <svg><use href="#i-communication"/></svg> <span class="rail-item-label">Communication</span></button>
+      <button class="rail-item" data-view="speakers">           <svg><use href="#i-speakers"/></svg>      <span class="rail-item-label">Speakers</span></button>
+      <button class="rail-item" data-view="certificates">       <svg><use href="#i-certificates"/></svg>  <span class="rail-item-label">Certificates</span></button>
+      <button class="rail-item" data-view="eventday">           <svg><use href="#i-eventday"/></svg>      <span class="rail-item-label">Event day</span></button>
+    </div>
+    <div class="rail-status">
+      <span class="pulse" aria-hidden="true"></span>
+      <span>All systems operational</span>
+    </div>
+  </nav>
+
+  <div class="main">
+    <header class="topbar">
+      <div style="display:flex;align-items:center;gap:14px;">
+        <button class="menu-btn" id="menu-btn" aria-label="Open navigation"><svg><use href="#i-menu"/></svg></button>
+        <h1 class="topbar-title" id="topbar-title">Overview</h1>
+      </div>
+      <div class="topbar-actions">
+
+        <!-- Notification bell -->
+        <div class="notif-wrap" id="notif-wrap">
+          <button class="notif-btn" id="notif-btn" aria-label="Notifications" aria-expanded="false" aria-haspopup="true">
+            <svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            <span class="notif-badge" id="notif-badge" aria-hidden="true"></span>
+          </button>
+          <div class="notif-panel" id="notif-panel" role="dialog" aria-label="Notifications">
+            <div class="notif-panel-head">
+              <h3>Notifications</h3>
+              <div class="notif-panel-actions">
+                <button class="btn btn-ghost btn-sm" id="notif-mark-all">Mark all read</button>
+              </div>
+            </div>
+            <div class="notif-permission-row" id="notif-permission-row">
+              <p>Enable browser notifications to be alerted while this tab is open.</p>
+              <button class="btn btn-solid btn-sm" id="notif-enable-btn">Enable</button>
+            </div>
+            <div class="notif-settings-row">
+              <label for="notif-interval">Check every</label>
+              <select id="notif-interval">
+                <option value="30">30 seconds</option>
+                <option value="60" selected>1 minute</option>
+                <option value="120">2 minutes</option>
+                <option value="300">5 minutes</option>
+              </select>
+            </div>
+            <div class="notif-list" id="notif-list">
+              <div class="notif-item">
+                <span class="notif-dot read"></span>
+                <div class="notif-text"><div class="notif-msg">Notifications will appear here as activity is detected.</div></div>
+              </div>
+            </div>
+            <div class="notif-footer">
+              <span class="notif-poll-status">
+                <span class="notif-poll-dot paused" id="notif-poll-dot"></span>
+                <span id="notif-poll-label">Waiting for permission</span>
+              </span>
+              <button class="btn btn-ghost btn-sm" id="notif-clear-all">Clear all</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="gsearch">
+          <svg><use href="#i-search"/></svg>
+          <input type="text" id="gsearch-input" placeholder="Search name, email, code…" autocomplete="off">
+          <div class="gsearch-results" id="gsearch-results"></div>
+        </div>
+      </div>
+    </header>
+
+    <main class="content">
+
+      <section class="view active" id="view-overview">
+        <div class="section-head"><div><h2>Overview</h2><p class="section-sub">How Decrypt is doing, right now.</p></div></div>
+        <div class="stat-strip" id="ov-stats"></div>
+        <div class="chamber"><div class="chamber-head"><h3 class="label">Registration trend — last 14 days</h3></div><div class="chamber-body" id="ov-trend"></div></div>
+        <div class="chamber-grid-2">
+          <div class="chamber"><div class="chamber-head"><h3 class="label">Recent registrations</h3></div><div class="chamber-body row-list" id="ov-recent-reg"></div></div>
+          <div class="chamber"><div class="chamber-head"><h3 class="label">Recent check-ins</h3></div><div class="chamber-body row-list" id="ov-recent-checkin"></div></div>
+        </div>
+        <div class="chamber-grid-2">
+          <div class="chamber"><div class="chamber-head"><h3 class="label">Attention required</h3></div><div class="chamber-body" id="ov-attention"></div></div>
+          <div class="chamber"><div class="chamber-head"><h3 class="label">System status</h3></div><div class="chamber-body" id="ov-system" style="display:flex;flex-wrap:wrap;gap:10px;padding:18px 20px;"></div></div>
+        </div>
+      </section>
+
+      <section class="view" id="view-registration">
+        <div class="section-head"><div><h2>Registration</h2><p class="section-sub">Every submission, since the form opened.</p></div></div>
+        <div class="stat-strip" id="reg-stats"></div>
+        <div class="chamber"><div class="chamber-head"><h3 class="label">Registrations by source</h3></div><div class="chamber-body" id="reg-source"></div></div>
+        <div class="chamber">
+          <div class="toolbar">
+            <input type="text" id="reg-search" placeholder="Search name, email or access code…">
+            <select id="reg-sort"><option value="date-desc">Newest first</option><option value="date-asc">Oldest first</option><option value="name-asc">Name A–Z</option></select>
+          </div>
+          <div class="table-wrap"><table class="dt" id="reg-table"></table></div>
+        </div>
+      </section>
+
+      <section class="view" id="view-participants">
+        <div class="section-head"><div><h2>Participants</h2><p class="section-sub">The full directory — search by name, email, or access code.</p></div></div>
+        <div class="chamber">
+          <div class="toolbar"><input type="text" id="part-search" placeholder="Search participants…"></div>
+          <div class="table-wrap"><table class="dt" id="part-table"></table></div>
+        </div>
+      </section>
+
+      <section class="view" id="view-attendance">
+        <div class="section-head"><div><h2>Attendance</h2><p class="section-sub">Who's here, and who isn't yet.</p></div></div>
+        <div class="stat-strip" id="att-stats"></div>
+        <div class="chamber-grid-2">
+          <div class="chamber"><div class="chamber-head"><h3 class="label">Arrivals by hour</h3></div><div class="chamber-body" id="att-arrivals"></div></div>
+          <div class="chamber"><div class="chamber-head"><h3 class="label">Recent check-ins</h3></div><div class="chamber-body row-list" id="att-recent"></div></div>
+        </div>
+        <div class="chamber"><div class="chamber-head"><h3 class="label">Scan log</h3></div><div class="table-wrap"><table class="dt" id="att-scanlog"></table></div></div>
+      </section>
+
+      <section class="view" id="view-communication">
+        <div class="section-head">
+          <div><h2>Communication</h2><p class="section-sub">How the last campaigns performed.</p></div>
+          <a class="btn btn-outline" href="https://decrypt-email-terminal.vercel.app" target="_blank" rel="noopener">Open dispatch console</a>
+        </div>
+        <div class="stat-strip" id="comm-stats"></div>
+        <div class="chamber"><div class="chamber-head"><h3 class="label">Campaign history</h3></div><div class="table-wrap"><table class="dt" id="comm-table"></table></div></div>
+      </section>
+
+      <section class="view" id="view-speakers">
+        <div class="section-head"><div><h2>Speakers</h2><p class="section-sub">Are our speakers ready?</p></div></div>
+        <div class="stat-strip" id="spk-stats"></div>
+        <div class="chamber"><div class="table-wrap"><table class="dt" id="spk-table"></table></div></div>
+      </section>
+
+      <section class="view" id="view-certificates">
+        <div class="section-head"><div><h2>Certificates</h2><p class="section-sub">Status tracking — generation comes later.</p></div></div>
+        <div class="stat-strip" id="cert-stats"></div>
+        <div class="chamber"><div class="table-wrap"><table class="dt" id="cert-table"></table></div></div>
+      </section>
+
+      <section class="view" id="view-eventday">
+        <div class="section-head"><div><h2>Event day</h2><p class="section-sub">Built for speed under pressure.</p></div></div>
+        <div class="eventday-grid" id="ed-stats"></div>
+        <div class="chamber">
+          <div class="chamber-body pad">
+            <div class="scan-panel">
+              <div class="scan-frame"><svg><use href="#i-camera"/></svg><span class="label">Use the scanner terminal for QR scanning</span></div>
+              <div>
+                <p class="label" style="margin-bottom:10px;">Manual check-in</p>
+                <div class="manual-checkin">
+                  <input type="text" id="ed-code-input" placeholder="DEC2.O-XXXXX" autocomplete="off">
+                  <button class="btn btn-solid" id="ed-checkin-btn">Check in</button>
+                </div>
+                <div id="ed-flash" style="margin-top:14px;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="chamber-grid-2">
+          <div class="chamber"><div class="chamber-head"><h3 class="label">Recent check-ins</h3></div><div class="chamber-body row-list" id="ed-recent"></div></div>
+          <div class="chamber"><div class="chamber-head"><h3 class="label">Duplicate / invalid alerts</h3></div><div class="chamber-body" id="ed-alerts"></div></div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<div class="modal-veil" id="modal-veil">
+  <div class="modal">
+    <div class="modal-head"><h3 id="modal-title">Participant</h3><button class="modal-close" id="modal-close"><svg><use href="#i-x"/></svg></button></div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script src="admin.js"></script>
+</body>
+</html>
