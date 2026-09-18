@@ -6,7 +6,7 @@
    ========================================================== */
 
 /* ---------- CONFIG — paste your values here ---------- */
-var API  = 'https://script.google.com/macros/s/AKfycbwKfWmoTNeJIIeI2Va8pcbcB0hlxSC3ZkBWIKLMDJx_cJ_E6NGXd71nvEHFL58w88i20w/exec';
+var API  = 'https://script.google.com/macros/s/AKfycbzVHb8xZQhAKIP7gwWy_GXJ_gRQjxmpOOHG-MMAeyb2x4KJBW3TN2HXC2TgcfGYHpCxyg/exec';
 var VAPID_PUBLIC_KEY = 'BJ7O_Ouxqyi7qGw_7e41gAekZmpNAl066e8LUjd6Lr6ozdQebwuHFtfFXhM4Tn2d3ka7B3mubWr5lLrFRpVJ1YY';
 var REGISTRATION_TARGET = 60;
 /* ----------------------------------------------------- */
@@ -170,7 +170,8 @@ var VIEW_CONTAINERS = {
   communication: ['comm-stats'],
   speakers:      ['spk-stats'],
   certificates:  ['cert-stats'],
-  eventday:      ['ed-stats','ed-recent','ed-alerts']
+  eventday:      ['ed-stats','ed-recent','ed-alerts'],
+  eventinfo: []
 };
 function showViewLoading(view) {
   (VIEW_CONTAINERS[view] || []).forEach(function (id) {
@@ -203,6 +204,50 @@ function openParticipantModal(p) {
 }
 document.getElementById('modal-close').addEventListener('click', function () { document.getElementById('modal-veil').classList.remove('open'); });
 document.getElementById('modal-veil').addEventListener('click', function (e) { if (e.target === this) this.classList.remove('open'); });
+
+function renderEventInfo() {
+  apiFetch({ action: 'get_event_info' })
+    .then(function (d) {
+      if (!d || !d.ok) return;
+      document.getElementById('ei-link').value         = d.joiningLink  || '';
+      document.getElementById('ei-schedule').value     = d.schedule     || '';
+      document.getElementById('ei-announcement').value = d.announcement || '';
+      document.getElementById('ei-doors').value        = d.doorsOpen    || '';
+      if (d.lastUpdated) {
+        document.getElementById('ei-last-updated').textContent =
+          'Last published ' + new Date(d.lastUpdated).toLocaleString();
+      }
+    })
+    .catch(function () {});
+}
+
+document.getElementById('eventinfo-save-btn').addEventListener('click', function () {
+  var btn = this;
+  btn.disabled = true;
+  btn.textContent = 'Publishing…';
+  apiFetch({
+    action:       'saveEventInfo',
+    joiningLink:  document.getElementById('ei-link').value.trim(),
+    schedule:     document.getElementById('ei-schedule').value.trim(),
+    announcement: document.getElementById('ei-announcement').value.trim(),
+    doorsOpen:    document.getElementById('ei-doors').value.trim()
+  })
+  .then(function (d) {
+    btn.disabled = false;
+    btn.textContent = 'Save & publish';
+    if (d && d.ok) {
+      toast('Event info published to participant portal.');
+      document.getElementById('ei-last-updated').textContent = 'Last published ' + new Date().toLocaleString();
+    } else {
+      toast('Could not save — try again.');
+    }
+  })
+  .catch(function () {
+    btn.disabled = false;
+    btn.textContent = 'Save & publish';
+    toast('Could not save — try again.');
+  });
+});
 
 /* ==========================================================
    SECTION RENDERERS — same logic as Phase 4, fetch() instead
@@ -481,8 +526,8 @@ document.getElementById('ed-code-input').addEventListener('keydown', function (e
 /* ==========================================================
    NAV / VIEW SWITCHING
    ========================================================== */
-var VIEW_TITLES = { overview:'Overview', registration:'Registration', participants:'Participants', attendance:'Attendance', communication:'Communication', speakers:'Speakers', certificates:'Certificates', eventday:'Event day' };
-var VIEW_RENDERERS = { overview:renderOverview, registration:renderRegistration, participants:renderParticipants, attendance:renderAttendance, communication:renderCommunication, speakers:renderSpeakers, certificates:renderCertificates, eventday:renderEventDay };
+var VIEW_TITLES = { overview:'Overview', registration:'Registration', participants:'Participants', attendance:'Attendance', communication:'Communication', speakers:'Speakers', certificates:'Certificates', eventday:'Event day', eventinfo: 'Event info' };
+var VIEW_RENDERERS = { overview:renderOverview, registration:renderRegistration, participants:renderParticipants, attendance:renderAttendance, communication:renderCommunication, speakers:renderSpeakers, certificates:renderCertificates, eventday:renderEventDay, eventinfo: renderEventInfo};
 
 function switchView(name) {
   document.querySelectorAll('.view').forEach(function (v) { v.classList.remove('active'); });
@@ -720,6 +765,9 @@ var Notif = (function () {
     if (diff<86400) return Math.floor(diff/3600)+'h ago'; return Math.floor(diff/86400)+'d ago';
   }
 
+
+
+  
   function init() {
     _items = loadItems(); renderList(); updateBadge(); checkPermission();
     if (_permitted) { registerSW().then(startPolling).catch(startPolling); }

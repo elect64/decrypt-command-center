@@ -79,9 +79,11 @@ var ADMIN_ACTIONS = {
   'getSpeakersData':         getSpeakersData,
   'getCertificatesData':     getCertificatesData,
   'getNotificationSnapshot': getNotificationSnapshot,
+  'get_event_info':          getEventInfo,
   'updateSpeakerField':      function(e) { return updateSpeakerField(Number(e.parameter.row), e.parameter.field, e.parameter.value); },
   'updateCertificateStatus': function(e) { return updateCertificateStatus(Number(e.parameter.row), e.parameter.status); },
   'performCheckIn':          function(e) { return performCheckIn(e.parameter.code); },
+  'saveEventInfo':           saveEventInfo,
   'savePushSubscription':    function(e) { return savePushSubscription(e.parameter.subscription); }
 };
 
@@ -98,6 +100,7 @@ function doGet(e) {
   if (action === 'track')         return trackEmailOpen(e);
   if (action === 'click')         return trackEmailClick(e);
   if (action === 'search')        return handleSearch(e);
+  if (action === 'get_event_info') return getEventInfo();
 
   // ---- Auth endpoint (no token needed — this is how you GET a token) ----
   if (action === 'admin_auth') {
@@ -148,6 +151,41 @@ function savePushSubscription(subscriptionJson) {
   } catch (err) {
     return { ok: false, error: err.toString() };
   }
+}
+
+function getEventInfo() {
+  var props = PropertiesService.getScriptProperties();
+  return {
+    ok: true,
+    joiningLink: props.getProperty('EVENT_INFO_LINK') || '',
+    schedule: props.getProperty('EVENT_INFO_SCHEDULE') || '',
+    announcement: props.getProperty('EVENT_INFO_ANNOUNCEMENT') || '',
+    doorsOpen: props.getProperty('EVENT_INFO_DOORS') || '',
+    lastUpdated: props.getProperty('EVENT_INFO_UPDATED') || ''
+  };
+}
+
+function saveEventInfo(e) {
+  var params = e && e.parameter ? e.parameter : {};
+  var payload = {
+    joiningLink: String(params.joiningLink || '').trim(),
+    schedule: String(params.schedule || '').trim(),
+    announcement: String(params.announcement || '').trim(),
+    doorsOpen: String(params.doorsOpen || '').trim()
+  };
+
+  var props = PropertiesService.getScriptProperties();
+  props.setProperty('EVENT_INFO_LINK', payload.joiningLink);
+  props.setProperty('EVENT_INFO_SCHEDULE', payload.schedule);
+  props.setProperty('EVENT_INFO_ANNOUNCEMENT', payload.announcement);
+  props.setProperty('EVENT_INFO_DOORS', payload.doorsOpen);
+  props.setProperty('EVENT_INFO_UPDATED', new Date().toISOString());
+
+  return {
+    ok: true,
+    ...payload,
+    lastUpdated: props.getProperty('EVENT_INFO_UPDATED')
+  };
 }
 
 function getPushSubscription() {

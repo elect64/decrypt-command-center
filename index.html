@@ -75,6 +75,7 @@
       <button class="rail-item" data-view="speakers">           <svg><use href="#i-speakers"/></svg>      <span class="rail-item-label">Speakers</span></button>
       <button class="rail-item" data-view="certificates">       <svg><use href="#i-certificates"/></svg>  <span class="rail-item-label">Certificates</span></button>
       <button class="rail-item" data-view="eventday">           <svg><use href="#i-eventday"/></svg>      <span class="rail-item-label">Event day</span></button>
+      <button class="rail-item" data-view="eventinfo">          <svg><use href="#i-registration"/></svg>  <span class="rail-item-label">Event info</span></button>
     </div>
     <div class="rail-status">
       <span class="pulse" aria-hidden="true"></span>
@@ -232,6 +233,36 @@
         </div>
       </section>
 
+      <section class="view" id="view-eventinfo">
+          <div class="section-head">
+            <div><h2>Event info</h2><p class="section-sub">What participants see in their portal.</p></div>
+            <button class="btn btn-solid" id="eventinfo-save-btn">Save &amp; publish</button>
+          </div>
+          <div class="chamber">
+            <div class="chamber-body pad" id="eventinfo-form">
+              <div style="display:flex;flex-direction:column;gap:18px;">
+                <div class="field">
+                  <label class="label" style="display:block;margin-bottom:6px;">Joining link</label>
+                  <input type="url" id="ei-link" placeholder="https://..." style="width:100%;background:var(--surface-2);border:1px solid var(--border);color:var(--text);padding:11px 14px;border-radius:8px;font-size:0.9rem;">
+                </div>
+                <div class="field">
+                  <label class="label" style="display:block;margin-bottom:6px;">Doors open</label>
+                  <input type="text" id="ei-doors" placeholder="e.g. Saturday 4 October, 9:00 AM WAT" style="width:100%;background:var(--surface-2);border:1px solid var(--border);color:var(--text);padding:11px 14px;border-radius:8px;font-size:0.9rem;">
+                </div>
+                <div class="field">
+                  <label class="label" style="display:block;margin-bottom:6px;">Schedule (one session per line)</label>
+                  <textarea id="ei-schedule" rows="6" placeholder="9:00 AM — Opening&#10;9:30 AM — Cybersecurity session&#10;..." style="width:100%;background:var(--surface-2);border:1px solid var(--border);color:var(--text);padding:11px 14px;border-radius:8px;font-size:0.9rem;resize:vertical;font-family:var(--font-body);"></textarea>
+                </div>
+                <div class="field">
+                  <label class="label" style="display:block;margin-bottom:6px;">Announcement <span style="color:var(--text-muted);font-size:0.62rem;">(optional — shows highlighted in the portal)</span></label>
+                  <input type="text" id="ei-announcement" placeholder="e.g. Joining links will be shared 30 minutes before start" style="width:100%;background:var(--surface-2);border:1px solid var(--border);color:var(--text);padding:11px 14px;border-radius:8px;font-size:0.9rem;">
+                </div>
+                <p class="label" id="ei-last-updated" style="margin-top:4px;"></p>
+              </div>
+            </div>
+          </div>
+      </section>
+      
     </main>
   </div>
 </div>
