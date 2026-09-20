@@ -6,7 +6,7 @@
    ========================================================== */
 
 /* ---------- CONFIG — paste your values here ---------- */
-var API  = 'https://script.google.com/macros/s/AKfycbw9necQBsuDmL2QvCql_osp4A1kCcA0vjVp8RhMi-AMHLN5KMGEeFzr4Yu_d4Zu5IZ3Cg/exec';
+var API  = 'https://script.google.com/macros/s/AKfycbwy6FTlIEmCRI3ioxKGhB9lbAuCt4d1FqzEqvT92rDG9Qk2sVOzhx2pr3vIZG4rR6PEzw/exec';
 var VAPID_PUBLIC_KEY = 'BJ7O_Ouxqyi7qGw_7e41gAekZmpNAl066e8LUjd6Lr6ozdQebwuHFtfFXhM4Tn2d3ka7B3mubWr5lLrFRpVJ1YY';
 var REGISTRATION_TARGET = 60;
 /* ----------------------------------------------------- */
